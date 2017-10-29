@@ -1,8 +1,7 @@
-
 \.DS_Store
-
 \.idea/
-
-tweets/
-
+1day/
+7days/
 eval/
+out/
+*.iml
