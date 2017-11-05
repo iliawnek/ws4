@@ -1,18 +1,16 @@
 package design.kenli;
 
-import java.util.Date;
-
 class Tweet {
     private String id;
-    private Date timestamp;
+    private long time;
     private String userId;
     private String tokens;
     private String content;
     private Cluster cluster;
 
-    Tweet(String tweetId, Date timestamp, String userId, String tokens, String content, Cluster cluster) {
+    Tweet(String tweetId, long time, String userId, String tokens, String content, Cluster cluster) {
         this.id = tweetId;
-        this.timestamp = timestamp;
+        this.time = time;
         this.userId = userId;
         this.tokens = tokens;
         this.content = content;
@@ -23,8 +21,8 @@ class Tweet {
         return id;
     }
 
-    Date getTimestamp() {
-        return timestamp;
+    long getTime() {
+        return time;
     }
 
     String getUserId() {
@@ -52,9 +50,9 @@ class Tweet {
             cluster.getId() + "," +
             cluster.getEntity().getName() + "," +
             id + "," +
-            timestamp.getTime() + "," +
+                    time + "," +
             userId + "," +
             tokens + "," +
-            content + "\n";
+            content;
     }
 }

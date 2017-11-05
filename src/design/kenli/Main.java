@@ -2,6 +2,7 @@ package design.kenli;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 
 public class Main {
@@ -24,10 +25,20 @@ public class Main {
             }
             reader.close();
 
-            // TODO: filter out the noise.
+//            ArrayList<Double> values = new ArrayList<>();
+//            for (Cluster cluster : dataset.getClusters()) values.add(cluster.getUserDiversity());
+//            Collections.sort(values);
+//            for (double value : values) System.out.println(value);
+
+            // Remove noise.
+            dataset.filterClusterSize(10);
+            dataset.filterClusterUserDiversity(0.90); // 0.95 is better in 7days
+
+            // TODO: Detect events.
+
 
             // Write modified tweet data to file.
-            Main.outputCSV("unchanged", dataset);
+            Main.outputCSV("output", dataset);
         }
         catch (FileNotFoundException e) {
             System.out.printf("Unable to open %s.\n", inputFilename);
@@ -39,24 +50,25 @@ public class Main {
         }
     }
 
+    // TODO: create output directory if it doesn't exist
+    // TODO: https://stackoverflow.com/questions/8668905/directory-does-not-exist-with-filewriter
     private static void outputCSV(String filename, Dataset dataset) throws IOException {
         // Sort clusters by ID.
-        ArrayList<Cluster> clusters = new ArrayList<>();
-        for (Entity entity : dataset.getEntities()) {
-            for (Cluster cluster : entity.getClusters()) {
-                clusters.add(cluster);
-            }
-        }
+        ArrayList<Cluster> clusters = dataset.getClusters();
         clusters.sort(Comparator.comparingInt(Cluster::getId));
 
-        String outputFilename = filename + ".csv";
-        FileWriter writer = new FileWriter(outputFilename);
+        ArrayList<String> lines = new ArrayList<>();
         for (Cluster cluster : clusters) {
-            for (String line : cluster.toCSV()) {
-                writer.write(line);
-            }
+            lines.addAll(cluster.toCSV());
         }
+        writeLines(filename, lines);
+    }
 
+    private static void writeLines(String filename, ArrayList<String> lines) throws IOException {
+        FileWriter writer = new FileWriter("output/" + filename + ".csv");
+        for (String line : lines) {
+            writer.write(line + "\n");
+        }
         writer.close();
     }
 }
