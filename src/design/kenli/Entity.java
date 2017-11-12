@@ -84,7 +84,7 @@ class Entity {
         ArrayList<Window> windows = new ArrayList<>();
 
         // for each window...
-        while (end < limit + 1) {
+        while (end < limit) {
             // create new Window
             Window window = new Window(start, end);
             windows.add(window);

@@ -31,18 +31,12 @@ public class Main {
             System.out.println("cluster size > 10: " + dataset.countTweets());
             dataset.filterClusterUserDiversity(0.90); // 0.95 is better in 7days
             System.out.println("cluster user diversity > 0.9: " + dataset.countTweets());
-            dataset.filterEntitySize(0);
-            System.out.println("entity size > 0: " + dataset.countTweets());
-            dataset.filterEntityDuration(5);
-            System.out.println("entity duration > 5: " + dataset.countTweets());
             int threshold = 5;
-            int filterSize = 10;
-            int leniency = 5;
+            int filterSize = 20;
+            int leniency = 3;
             dataset.markPeakingClusters(5, threshold, filterSize, leniency, 10);
             dataset.markPeakingClusters(30, threshold, filterSize, leniency, 60);
             dataset.markPeakingClusters(60, threshold, filterSize, leniency, 120);
-//            dataset.markPeakingClusters(120, threshold, filterSize, leniency, 240);
-//            dataset.markPeakingClusters(240, threshold, filterSize, leniency, minimumPeakSize);
             dataset.filterNonPeakingClusters();
             System.out.println("non-peaking: " + dataset.countTweets());
 
