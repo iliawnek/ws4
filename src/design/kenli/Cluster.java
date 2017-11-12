@@ -7,6 +7,7 @@ public class Cluster {
     private int id;
     private ArrayList<Tweet> tweets;
     private Entity entity;
+    private boolean peaking = false;
 
     public Cluster(int id, Entity entity) {
         this.id = id;
@@ -51,16 +52,25 @@ public class Cluster {
         return sum/size();
     }
 
-    double getStandardTimeDeviation() {
-        double mean = getCentroidTime();
-        double temp = 0;
+    long getEarliestTime() {
+        long earliest = Long.MAX_VALUE;
         for (Tweet tweet : getTweets()) {
-            double time = tweet.getTime();
-            temp += (time - mean) * (time - mean);
+            long time = tweet.getTime();
+            if (time < earliest) earliest = time;
         }
-        double variance = temp / (size() - 1);
-        return Math.sqrt(variance);
+        return earliest;
     }
+
+//    double getStandardTimeDeviation() {
+//        double mean = getCentroidTime();
+//        double temp = 0;
+//        for (Tweet tweet : getTweets()) {
+//            double time = tweet.getTime();
+//            temp += (time - mean) * (time - mean);
+//        }
+//        double variance = temp / (size() - 1);
+//        return Math.sqrt(variance);
+//    }
 
     /**
      * Diversity of 1 indicates that every user is unique.
@@ -78,5 +88,13 @@ public class Cluster {
 
     void remove() {
         entity.removeCluster(id);
+    }
+
+    void markAsPeaking() {
+        peaking = true;
+    }
+
+    boolean isPeaking() {
+        return peaking;
     }
 }

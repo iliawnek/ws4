@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) {
         // Only accept one argument.
         if (args.length != 1) {
-            System.out.println("Takes one and only one argument: path to .csv tweet data file.");
+            System.out.println("Only one argument: path to .csv tweet file");
             return;
         }
 
@@ -25,17 +25,60 @@ public class Main {
             }
             reader.close();
 
-//            ArrayList<Double> values = new ArrayList<>();
-//            for (Cluster cluster : dataset.getClusters()) values.add(cluster.getUserDiversity());
-//            Collections.sort(values);
-//            for (double value : values) System.out.println(value);
-
             // Remove noise.
+            System.out.println("original: " + dataset.countTweets());
             dataset.filterClusterSize(10);
+            System.out.println("cluster size > 10: " + dataset.countTweets());
             dataset.filterClusterUserDiversity(0.90); // 0.95 is better in 7days
+            System.out.println("cluster user diversity > 0.9: " + dataset.countTweets());
+            dataset.filterEntitySize(0);
+            System.out.println("entity size > 0: " + dataset.countTweets());
+            dataset.filterEntityDuration(5);
+            System.out.println("entity duration > 5: " + dataset.countTweets());
+            int threshold = 5;
+            int filterSize = 10;
+            int leniency = 5;
+            dataset.markPeakingClusters(5, threshold, filterSize, leniency, 10);
+            dataset.markPeakingClusters(30, threshold, filterSize, leniency, 60);
+            dataset.markPeakingClusters(60, threshold, filterSize, leniency, 120);
+//            dataset.markPeakingClusters(120, threshold, filterSize, leniency, 240);
+//            dataset.markPeakingClusters(240, threshold, filterSize, leniency, minimumPeakSize);
+            dataset.filterNonPeakingClusters();
+            System.out.println("non-peaking: " + dataset.countTweets());
 
-            // TODO: Detect events.
-
+            // Check windows.
+//            Entity entity = dataset.getRandomEntity();
+//            Entity entity = dataset.getEntity("missy elliot");
+//            ArrayList<Window> windows = entity.getWindows(5, 5, 5, 10);
+//            System.out.println("entity: " + entity.getName());
+//            System.out.println("tweets: " + entity.countTweets());
+//            System.out.println("5-minute windows: " + windows.size());
+//
+//            ArrayList<String> toPrint = new ArrayList<>();
+//
+//            for (Window w : windows) {
+//                toPrint.add(
+//                        w.getStart() + " - " +
+//                                w.getEnd() + " - " +
+//                                w.getTweetCount() +
+//                                (w.isPeaking() ? " - peak" : "")
+//                );
+//            }
+//
+//            for (Cluster c : entity.getClusters()) {
+//                long clusterStart = (long) c.getCentroidTime();
+//                long startBound = clusterStart;
+//                long endBound = clusterStart + Utilities.minutesToMillis(25);
+//                toPrint.add(
+//                        startBound + " - " +
+//                        c.getId() + " start");
+//                toPrint.add(
+//                        endBound + " - " +
+//                        c.getId() + " end");
+//            }
+//
+//            Collections.sort(toPrint);
+//            for (String s : toPrint) System.out.println(s);
 
             // Write modified tweet data to file.
             Main.outputCSV("output", dataset);

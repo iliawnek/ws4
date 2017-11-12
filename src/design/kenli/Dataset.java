@@ -1,9 +1,7 @@
 package design.kenli;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 class Dataset {
     private HashMap<String, Entity> entities;
@@ -35,17 +33,22 @@ class Dataset {
      * @param entityName Name of the entity.
      * @return an entity with the name entityName.
      */
-    private Entity getEntity(String entityName) {
+    Entity getEntity(String entityName) {
         if (entities.containsKey(entityName)) {
             return entities.get(entityName);
         }
-        Entity newEntity = new Entity(entityName);
+        Entity newEntity = new Entity(entityName, this);
         entities.put(entityName, newEntity);
         return newEntity;
     }
 
-    Collection<Entity> getEntities() {
-        return entities.values();
+    Entity getRandomEntity() {
+        Random random = new Random();
+        return getEntities().get(random.nextInt(getEntities().size()));
+    }
+
+    ArrayList<Entity> getEntities() {
+        return new ArrayList<>(entities.values());
     }
 
     ArrayList<Cluster> getClusters() {
@@ -75,14 +78,22 @@ class Dataset {
         }
     }
 
-    void filterClusterStandardTimeDeviation(int maxMinutes) {
-        int maxMillis = maxMinutes * 60 * 1000;
-        for (Cluster cluster : getClusters()) {
-            if (cluster.getStandardTimeDeviation() > maxMillis) {
-                cluster.remove();
+    void filterEntitySize(int minTweets) {
+        for (Entity entity : getEntities()) {
+            if (entity.size() < minTweets) {
+                entity.remove();
             }
         }
     }
+
+//    void filterClusterStandardTimeDeviation(int maxMinutes) {
+//        int maxMillis = maxMinutes * 60 * 1000;
+//        for (Cluster cluster : getClusters()) {
+//            if (cluster.getStandardTimeDeviation() > maxMillis) {
+//                cluster.remove();
+//            }
+//        }
+//    }
 
     void filterClusterUserDiversity(double min) {
         for (Cluster cluster : getClusters()) {
@@ -91,6 +102,49 @@ class Dataset {
             }
         }
     }
+
+    void filterEntityDuration(int minMinutes) {
+        int minMillis = minMinutes * 60 * 1000;
+        for (Entity entity : getEntities()) {
+            if (entity.getDuration() < minMillis) {
+                entity.remove();
+            }
+        }
+    }
+
+    void markPeakingClusters(int windowDuration, int threshold, int filterSize, int leniency, int minimumPeakSize) {
+        for (Entity entity : getEntities()) {
+            // get peaking windows
+            ArrayList<Window> windows = entity.getWindows(windowDuration, threshold, filterSize, minimumPeakSize);
+            List<Window> peakingWindows = windows.stream()
+                    .filter(Window::isPeaking)
+                    .collect(Collectors.toList());
+
+            // mark clusters that start within or close to peaking windows
+            for (Cluster c : entity.getClusters()) {
+                for (Window w : peakingWindows) {
+                    double clusterTime = c.getCentroidTime();
+                    long windowDurationMillis = Utilities.minutesToMillis(windowDuration);
+                    if (clusterTime >= w.getStart() &&
+                        clusterTime <= (w.getEnd() + (windowDurationMillis * leniency))) {
+                        c.markAsPeaking();
+                    }
+                }
+            }
+        }
+    }
+
+    void filterNonPeakingClusters() {
+        for (Cluster c : getClusters()) {
+            if (!c.isPeaking()) c.remove();
+        }
+    }
+
+//    void detectEvents(int timeWindow) {
+//        for (Entity entity : getEntities()) {
+//            entity.detectEvents(timeWindow);
+//        }
+//    }
 
     ArrayList<String> toCSV() {
         ArrayList<String> lines = new ArrayList<>();
@@ -102,11 +156,15 @@ class Dataset {
 
     int countTweets() {
         int count = 0;
-        for (Entity entity : entities.values()) {
+        for (Entity entity : getEntities()) {
             for (Cluster cluster : entity.getClusters()) {
                 count += cluster.getTweets().size();
             }
         }
         return count;
+    }
+
+    void removeEntity(String entityName) {
+        entities.remove(entityName);
     }
 }

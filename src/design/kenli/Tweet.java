@@ -49,10 +49,6 @@ class Tweet {
         return
             cluster.getId() + "," +
             cluster.getEntity().getName() + "," +
-            id + "," +
-                    time + "," +
-            userId + "," +
-            tokens + "," +
-            content;
+            id + ",";
     }
 }
