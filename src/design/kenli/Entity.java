@@ -76,7 +76,7 @@ class Entity {
      * @param windowDuration duration of time window in minutes
      * @return list of windows across the entity
      */
-    ArrayList<Window> getWindows(int windowDuration, int threshold, int filterSize, int minimumBurstFactor) {
+    ArrayList<Window> getWindows(int windowDuration, int threshold) {
         long windowDurationMillis = Utilities.minutesToMillis(windowDuration);
         long start = getEarliestTime();
         long end = start + windowDurationMillis;
@@ -100,24 +100,16 @@ class Entity {
             end = start + windowDurationMillis;
         }
 
-
         // identify bursting windows
-        int windowCount = windows.size();
-        for (int i = 0; i < windowCount; i++) {
-            Window window = windows.get(i);
-            int windowSize = window.getTweetCount();
-            if (windowSize >= windowDuration * minimumBurstFactor) {
-                window.markAsBursting();
-                continue;
-            }
-            List<Double> filter = windows.subList(i < filterSize ? 0 : i - filterSize, i).stream()
-                    .map(w -> (double) w.getTweetCount())
-                    .collect(Collectors.toList());
-            double mean = Utilities.mean(filter);
-            double stdDev = Utilities.standardDeviation(filter, mean);
+        List<Double> filter = windows.stream()
+                .map(w -> (double) w.getTweetCount())
+                .collect(Collectors.toList());
+        double mean = Utilities.mean(filter);
+        double stdDev = Utilities.standardDeviation(filter, mean);
 
-            if (Math.abs(windowSize - mean) > (threshold * stdDev)) {
-                window.markAsBursting();
+        for (Window w : windows) {
+            if ((w.getTweetCount() - mean) > (threshold * stdDev)) {
+                w.markAsBursting();
             }
         }
 

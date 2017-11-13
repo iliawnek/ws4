@@ -112,10 +112,10 @@ class Dataset {
         }
     }
 
-    void markBurstingClusters(int windowDuration, int threshold, int filterSize, int leniency, int minimumBurstFactor) {
+    void markBurstingClusters(int windowDuration, int threshold, int leniency) {
         for (Entity entity : getEntities()) {
             // get bursting windows
-            ArrayList<Window> windows = entity.getWindows(windowDuration, threshold, filterSize, minimumBurstFactor);
+            ArrayList<Window> windows = entity.getWindows(windowDuration, threshold);
             List<Window> burstingWindows = windows.stream()
                     .filter(Window::isBursting)
                     .collect(Collectors.toList());

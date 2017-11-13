@@ -31,14 +31,17 @@ public class Main {
             System.out.println("cluster size > 10: " + dataset.countTweets());
             dataset.filterClusterUserDiversity(0.90); // 0.95 is better in 7days
             System.out.println("cluster user diversity > 0.9: " + dataset.countTweets());
-            int threshold = 5;
-            int filterSize = 20;
-            int leniency = 3;
-            dataset.markBurstingClusters(5, threshold, filterSize, leniency, 2);
-            dataset.markBurstingClusters(30, threshold, filterSize, leniency, 2);
-            dataset.markBurstingClusters(60, threshold, filterSize, leniency, 2);
+            int threshold = 3;
+            int leniency = 5;
+            dataset.markBurstingClusters(5, threshold, leniency);
+//            dataset.markBurstingClusters(10, threshold, leniency);
+//            dataset.markBurstingClusters(20, threshold, leniency);
+            dataset.markBurstingClusters(30, threshold, leniency);
+            dataset.markBurstingClusters(60, threshold, leniency);
+//            dataset.markBurstingClusters(120, threshold, leniency);
+//            dataset.markBurstingClusters(240, threshold, leniency);
             dataset.filterNonBurstingClusters();
-            System.out.println("non-bursting: " + dataset.countTweets());
+            System.out.println("bursting: " + dataset.countTweets());
 
             // Check windows.
 //            Entity entity = dataset.getRandomEntity();
