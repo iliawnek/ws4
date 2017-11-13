@@ -7,7 +7,7 @@ public class Cluster {
     private int id;
     private ArrayList<Tweet> tweets;
     private Entity entity;
-    private boolean peaking = false;
+    private boolean bursting = false;
 
     public Cluster(int id, Entity entity) {
         this.id = id;
@@ -90,11 +90,11 @@ public class Cluster {
         entity.removeCluster(id);
     }
 
-    void markAsPeaking() {
-        peaking = true;
+    void markAsBursting() {
+        bursting = true;
     }
 
-    boolean isPeaking() {
-        return peaking;
+    boolean isBursting() {
+        return bursting;
     }
 }

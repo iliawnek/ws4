@@ -112,31 +112,31 @@ class Dataset {
         }
     }
 
-    void markPeakingClusters(int windowDuration, int threshold, int filterSize, int leniency, int minimumPeakSize) {
+    void markBurstingClusters(int windowDuration, int threshold, int filterSize, int leniency, int minimumBurstFactor) {
         for (Entity entity : getEntities()) {
-            // get peaking windows
-            ArrayList<Window> windows = entity.getWindows(windowDuration, threshold, filterSize, minimumPeakSize);
-            List<Window> peakingWindows = windows.stream()
-                    .filter(Window::isPeaking)
+            // get bursting windows
+            ArrayList<Window> windows = entity.getWindows(windowDuration, threshold, filterSize, minimumBurstFactor);
+            List<Window> burstingWindows = windows.stream()
+                    .filter(Window::isBursting)
                     .collect(Collectors.toList());
 
-            // mark clusters that start within or close to peaking windows
+            // mark clusters that start within or close to bursting windows
             for (Cluster c : entity.getClusters()) {
-                for (Window w : peakingWindows) {
+                for (Window w : burstingWindows) {
                     double clusterTime = c.getCentroidTime();
                     long windowDurationMillis = Utilities.minutesToMillis(windowDuration);
                     if (clusterTime >= w.getStart() &&
                         clusterTime <= (w.getEnd() + (windowDurationMillis * leniency))) {
-                        c.markAsPeaking();
+                        c.markAsBursting();
                     }
                 }
             }
         }
     }
 
-    void filterNonPeakingClusters() {
+    void filterNonBurstingClusters() {
         for (Cluster c : getClusters()) {
-            if (!c.isPeaking()) c.remove();
+            if (!c.isBursting()) c.remove();
         }
     }
 

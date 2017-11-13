@@ -4,7 +4,7 @@ public class Window {
     private long start;
     private long end;
     private int tweetCount;
-    private boolean peaking = false;
+    private boolean bursting = false;
 
     public Window(long start, long end) {
         this.start = start;
@@ -20,12 +20,12 @@ public class Window {
         return end;
     }
 
-    public void markAsPeaking() {
-        this.peaking = true;
+    public void markAsBursting() {
+        this.bursting = true;
     }
 
-    public boolean isPeaking() {
-        return this.peaking;
+    public boolean isBursting() {
+        return this.bursting;
     }
 
     int getTweetCount() {

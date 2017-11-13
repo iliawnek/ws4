@@ -34,11 +34,11 @@ public class Main {
             int threshold = 5;
             int filterSize = 20;
             int leniency = 3;
-            dataset.markPeakingClusters(5, threshold, filterSize, leniency, 10);
-            dataset.markPeakingClusters(30, threshold, filterSize, leniency, 60);
-            dataset.markPeakingClusters(60, threshold, filterSize, leniency, 120);
-            dataset.filterNonPeakingClusters();
-            System.out.println("non-peaking: " + dataset.countTweets());
+            dataset.markBurstingClusters(5, threshold, filterSize, leniency, 2);
+            dataset.markBurstingClusters(30, threshold, filterSize, leniency, 2);
+            dataset.markBurstingClusters(60, threshold, filterSize, leniency, 2);
+            dataset.filterNonBurstingClusters();
+            System.out.println("non-bursting: " + dataset.countTweets());
 
             // Check windows.
 //            Entity entity = dataset.getRandomEntity();
@@ -55,7 +55,7 @@ public class Main {
 //                        w.getStart() + " - " +
 //                                w.getEnd() + " - " +
 //                                w.getTweetCount() +
-//                                (w.isPeaking() ? " - peak" : "")
+//                                (w.isBursting() ? " - burst" : "")
 //                );
 //            }
 //
