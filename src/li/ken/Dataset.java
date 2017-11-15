@@ -12,6 +12,7 @@ class Dataset {
         entities = new HashMap<>();
     }
 
+    // Add a new tweet to the dataset from a CSV string representation.
     void addTweet(String tweetLine) {
         // Extract values from comma-separated line representing a tweet.
         String[] tweetValues = tweetLine.split(",", 7);
@@ -142,6 +143,16 @@ class Dataset {
         for (Cluster c : getClusters()) {
             if (!c.isBursting()) c.remove();
         }
+    }
+
+    // Get all events in the dataset.
+    ArrayList<Event> getEvents() {
+        // Generate an event for each cluster in the dataset.
+        ArrayList<Event> events = new ArrayList<>();
+        for (Cluster c : getClusters()) {
+            events.add(new Event(c));
+        }
+        return events;
     }
 
     // Output the entire dataset as a list of CSV strings.
