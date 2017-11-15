@@ -40,7 +40,7 @@ public class Main {
             System.out.println("non-bursting: " + dataset.size());
 
             // Write modified tweet data to file.
-            Main.outputCSV("output", dataset);
+            Main.writeLines("output", dataset.toCSV());
         }
         catch (FileNotFoundException e) {
             System.out.printf("Unable to open %s.\n", inputFilename);
@@ -50,11 +50,6 @@ public class Main {
             System.out.printf("Error reading %s.\n", inputFilename);
             e.printStackTrace();
         }
-    }
-
-    // Outputs the filtered dataset to "./output.csv".
-    private static void outputCSV(String filename, Dataset dataset) throws IOException {
-        writeLines(filename, dataset.toCSV());
     }
 
     // Writes a list of strings to "./output.csv", where each string is treated as a line.
