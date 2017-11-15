@@ -1,13 +1,14 @@
-package design.kenli;
+package li.ken;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
+// Represents a cluster of tweets within a parent entity partition.
 public class Cluster {
     private int id;
     private ArrayList<Tweet> tweets;
     private Entity entity;
-    private boolean bursting = false;
+    private boolean bursting = false; // All clusters are assumed not to be bursting until ken.li.Dataset#markBurstingClusters is called.
 
     public Cluster(int id, Entity entity) {
         this.id = id;
@@ -15,23 +16,28 @@ public class Cluster {
         this.entity = entity;
     }
 
+    // Get the ID of the cluster as determined by the contained tweets from the input file.
     int getId() {
         return id;
     }
 
+    // Returns all tweets in the cluster as a list.
     ArrayList<Tweet> getTweets() {
         return tweets;
     }
 
+    // Returns the parent entity.
     Entity getEntity() {
         return entity;
     }
 
+    // Adds a new tweet to the cluster.
     void addTweet(String tweetId, long time, String userId, String tokens, String content) {
         Tweet tweet = new Tweet(tweetId, time, userId, tokens, content, this);
         tweets.add(tweet);
     }
 
+    // Returns all tweets in the cluster as a list of CSV strings.
     ArrayList<String> toCSV() {
         ArrayList<String> lines = new ArrayList<>();
         for (Tweet tweet : tweets) {
@@ -40,10 +46,12 @@ public class Cluster {
         return lines;
     }
 
+    // Returns the total number of tweets in the cluster.
     int size() {
         return tweets.size();
     }
 
+    // Returns the mean timestamp of all tweets in the cluster.
     double getCentroidTime() {
         double sum = 0.0;
         for (Tweet tweet : getTweets()) {
@@ -52,6 +60,7 @@ public class Cluster {
         return sum/size();
     }
 
+    // Returns the earliest timestamp of any tweet in the cluster.
     long getEarliestTime() {
         long earliest = Long.MAX_VALUE;
         for (Tweet tweet : getTweets()) {
@@ -61,21 +70,9 @@ public class Cluster {
         return earliest;
     }
 
-//    double getStandardTimeDeviation() {
-//        double mean = getCentroidTime();
-//        double temp = 0;
-//        for (Tweet tweet : getTweets()) {
-//            double time = tweet.getTime();
-//            temp += (time - mean) * (time - mean);
-//        }
-//        double variance = temp / (size() - 1);
-//        return Math.sqrt(variance);
-//    }
-
-    /**
-     * Diversity of 1 indicates that every user is unique.
-     * @return measure of diversity of users in the cluster
-     */
+    // Gets the user diversity score of the cluster.
+    // User diversity score is defined as the number of unique users per tweet.
+    // A score of 1 would indicate that every user is unique.
     double getUserDiversity() {
         HashSet<String> userIds = new HashSet<>();
         for (Tweet tweet : getTweets()) {
@@ -86,14 +83,17 @@ public class Cluster {
         return uniqueUserIdCount / clusterSize;
     }
 
+    // Remove this cluster from the parent entity.
     void remove() {
         entity.removeCluster(id);
     }
 
+    // Mark this cluster as bursting.
     void markAsBursting() {
         bursting = true;
     }
 
+    // Returns true if this cluster is bursting.
     boolean isBursting() {
         return bursting;
     }
