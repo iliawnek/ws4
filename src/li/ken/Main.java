@@ -28,7 +28,7 @@ public class Main {
             System.out.println("original: " + dataset.size());
             dataset.filterClusterSize(10);
             System.out.println("cluster size > 10: " + dataset.size());
-            dataset.filterClusterUserDiversity(0.90); // 0.95 is better in 7days
+            dataset.filterClusterUserDiversity(0.90);
             System.out.println("cluster user diversity > 0.9: " + dataset.size());
             int threshold = 5;
             int filterSize = 20;
