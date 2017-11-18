@@ -25,20 +25,20 @@ public class Main {
             reader.close();
 
             // Algorithm parameters.
-            final int minClusterSize = 10;
-            final double minDiversity = 0.9;
-            final int[] windowSizes = {5, 30, 60};
-            final int threshold = 5;
-            final int filterSize = 20;
-            final int leniency = 3;
-            final int minBurstFactor = 2;
+            final int minClusterSize = 12;
+            final double minDiversity = 0.95;
+            final int[] windowSizes = {5, 10, 20, 30, 40, 50, 60};
+            final double threshold = 2.0;
+            final int filterSize = 50;
+            final double leniency = 1.0;
+            final double minBurstFactor = 1.0;
 
             // Filter clusters.
             System.out.println("original: " + dataset.size());
             dataset.filterClusterSize(minClusterSize);
-            System.out.println("cluster size > " + minClusterSize + ": " + dataset.size());
+            System.out.println("cluster size >= " + minClusterSize + ": " + dataset.size());
             dataset.filterClusterUserDiversity(minDiversity);
-            System.out.println("cluster user diversity > " + minDiversity + ": " + dataset.size());
+            System.out.println("cluster user diversity >= " + minDiversity + ": " + dataset.size());
             for (int windowSize : windowSizes)
                 dataset.markBurstingClusters(windowSize, threshold, filterSize, leniency, minBurstFactor);
             dataset.filterNonBurstingClusters();

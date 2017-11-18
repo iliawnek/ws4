@@ -116,7 +116,7 @@ class Dataset {
     // filterSize: How many of the preceding windows should be considered when determining whether a window has burst.
     // leniency: How much later a cluster can be from a window to be considered to be caused by that bursting window. Units are the number of window durations.
     // minimumBurstFactor: If a window has more than (windowDuration * minimumBurstFactor) tweets, it is considered bursting regardless of preceding windows.
-    void markBurstingClusters(int windowDuration, int threshold, int filterSize, int leniency, int minimumBurstFactor) {
+    void markBurstingClusters(int windowDuration, double threshold, int filterSize, double leniency, double minimumBurstFactor) {
         for (Entity entity : getEntities()) {
             // Get bursting windows for the entity.
             ArrayList<Window> windows = entity.getWindows(windowDuration, threshold, filterSize, minimumBurstFactor);

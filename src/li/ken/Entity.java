@@ -80,7 +80,7 @@ class Entity {
     // Returns an ordered list of windows of tweets mentioning the entity.
     // Marks windows as bursting depending on the input parameters.
     // See li.ken.Dataset#markBurstingClusters for information about the input parameters.
-    ArrayList<Window> getWindows(int windowDuration, int threshold, int filterSize, int minimumBurstFactor) {
+    ArrayList<Window> getWindows(int windowDuration, double threshold, int filterSize, double minimumBurstFactor) {
         long windowDurationMillis = Utilities.minutesToMillis(windowDuration);
         long start = getEarliestTime();
         long end = start + windowDurationMillis;
